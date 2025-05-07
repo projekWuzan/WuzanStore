@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register</title>
+  <link rel="stylesheet" href="/publik/login.css">
+</head>
+<body>
+  <div class="login-container">
+    <h2>Register</h2>
+    <form id="register-form">
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" required>
+      
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password" required>
+      
+      <label for="confirm-password">Confirm Password:</label>
+      <input type="password" id="confirm-password" name="confirm-password" required>
+      
+      <button type="submit">Register</button>
+      <p>Sudah punya akun? <a href="login.html">Login</a></p>
+    </form>
+    <p id="response-message"></p>
+  </div>
+
+  <script>
+    const registerForm = document.getElementById('register-form');
+    registerForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirm-password').value;
+
+      if (password !== confirmPassword) {
+        document.getElementById('response-message').textContent = 'Password tidak cocok!';
+        document.getElementById('response-message').style.color = 'red';
+        return;
+      }
+
+      const response = await fetch('http://127.0.0.1:5000/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: email, password })
+      });
+
+      const messageEl = document.getElementById('response-message');
+      if (response.ok) {
+        messageEl.textContent = 'Registrasi berhasil! Silakan login.';
+        messageEl.style.color = 'green';
+        // Redirect ke halaman login setelah registrasi berhasil
+        setTimeout(() => {
+          window.location.href = 'login.html';
+        }, 2000);  // Redirect setelah 2 detik
+      } else {
+        const data = await response.json();
+        messageEl.textContent = data.message || 'Registrasi gagal!';
+        messageEl.style.color = 'red';
+      }
+    });
+  </script>
+</body>
+</html>

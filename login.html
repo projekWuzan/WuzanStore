@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <link rel="stylesheet" href="/publik/login.css">
+</head>
+<body>
+  <div class="login-container">
+    <h2>Login</h2>
+    <form id="login-form">
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" required>
+      
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password" required>
+      
+      <button type="submit">Login</button>
+      <p>Belum punya akun? <a href="register.html">Daftar</a></p>
+    </form>
+    <p id="response-message"></p>
+  </div>
+
+  <script>
+    const loginForm = document.getElementById('login-form');
+    loginForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      const response = await fetch('http://127.0.0.1:5000/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: email, password })
+      });
+
+      const messageEl = document.getElementById('response-message');
+      if (response.ok) {
+        messageEl.textContent = 'Login berhasil!';
+        messageEl.style.color = 'green';
+        // Redirect ke halaman Webstore setelah login berhasil
+        setTimeout(() => {
+          window.location.href = 'index.html';  // Arahkan ke halaman webstore
+        }, 2000);  // Redirect setelah 2 detik
+      } else {
+        const data = await response.json();
+        messageEl.textContent = data.message || 'Login gagal!';
+        messageEl.style.color = 'red';
+      }
+    });
+  </script>
+</body>
+</html>
